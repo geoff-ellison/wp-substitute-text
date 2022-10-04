@@ -7,7 +7,7 @@ For example, if your page is being viewed on a mobile device, you want people to
 see text like "_Please tap the button_" and if on a desktop it should show "_Please 
 click the button_".
 
-## BASIC USAGE
+## Basic Usage
 In your page content, add this text:
 ```
 Please [substitute_text mobile="tap" desktop="click"] the button
@@ -33,7 +33,7 @@ On a desktop device, people will see:<br>
 
 _Coming soon_
 
-== Changelog ==
+## Changelog
 
 = 1.0 =
 * Initial release
