@@ -37,3 +37,8 @@ _Coming soon_
 
 = 1.0 =
 * Initial release
+
+## Contributing
+
+Contributions are welcome, whether in the form of software development, reporting issues, or just asking questions.
+Please read our [contributing guidelines](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
