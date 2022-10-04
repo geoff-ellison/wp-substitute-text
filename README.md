@@ -12,7 +12,7 @@ Substitute-Text is a Wordpress plugin for easily substituting the right text bas
 
 == Description ==
 
-#Substitute-Text
+# Substitute-Text
 
 *Substitute-Text* is a Wordpress plugin that provides a simple shortcode to easily 
 substitute the right text based on a range of conditions, such as the type of device.
@@ -21,7 +21,7 @@ For example, if your page is being viewed on a mobile device, you want people to
 see text like "_Please tap the button_" and if on a desktop it should show "_Please 
 click the button_".
 
-##BASIC USAGE
+## BASIC USAGE
 In your page content, add this text:
 ```
 Please [substitute_text mobile="tap" desktop="click"] the button
