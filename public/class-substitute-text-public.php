@@ -22,6 +22,15 @@
  */
 class Substitute_Text_Public {
 
+    /**
+     * The values to use in the 'insert' attribute in order to insert various texts.
+     */
+    private const INSERT_VALUE_YEAR = 'year';
+    private const INSERT_VALUE_MONTH_FULL = 'month';
+    private const INSERT_VALUE_MONTH_ABBR = 'month-abbr';
+    private const INSERT_VALUE_MONTH_NUM = 'month-num';
+    private const INSERT_VALUE_DATE_FORMAT = 'date-format';
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -29,18 +38,33 @@ class Substitute_Text_Public {
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
-	private $plugin_name;
+	private string $plugin_name;
 
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
+    /**
+     * The version of this plugin.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $version    The current version of this plugin.
+     */
+    private string $version;
 
-	/**
+    /**
+     * The permitted insert values.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $allowed_inserts    The list of strings allowed in the 'insert' attribute.
+     */
+    private $allowed_inserts = [
+        self::INSERT_VALUE_YEAR,
+        self::INSERT_VALUE_MONTH_FULL,
+        self::INSERT_VALUE_MONTH_ABBR,
+        self::INSERT_VALUE_MONTH_NUM,
+        self::INSERT_VALUE_DATE_FORMAT,
+    ];
+
+    /**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -105,31 +129,58 @@ class Substitute_Text_Public {
 		// add_shortcode( 'anothershortcode', array( $this, 'another_shortcode_function') );
 	}
 
-// Add Shortcode
-function substitute_text( $atts ) {
+    // Add Shortcode
+    function substitute_text($atts) {
 
-	// Attributes
-	$atts = shortcode_atts(
-		array(
-			'mobile' => '',
-			'desktop' => '',
-			'tablet' => '',
-		),
-		$atts
-	);
+        // Allowed attributes
+        $atts = shortcode_atts(
+            array(
+                'mobile' => '',
+                'desktop' => '',
+                'tablet' => '',
+                'insert' => '',
+                'format' => '',
+            ),
+            $atts
+        );
 
-	$text = "";
-	if (wp_is_mobile ()) {
-		if (isset($atts["mobile"])) {
-		    $text = $atts["mobile"];
-		}
-	} else {
-		if (isset($atts["desktop"])) {
-		    $text = $atts["desktop"];
-		}
-	}
-	return $text;
+        $text = "";
 
-}
+        // Do any required insertions, or continue if there are none.
+        if ($insert_text = $this->check_and_perform_insert($atts)) { return $insert_text; }
 
+        if (wp_is_mobile()) {
+            if (isset($atts["mobile"])) {
+                $text = $atts["mobile"];
+            }
+        } else {
+            if (isset($atts["desktop"])) {
+                $text = $atts["desktop"];
+            }
+        }
+        return $text;
+
+    }
+
+    function check_and_perform_insert($atts) {
+        // If we don't have an insert value, or we have one that is not an allowed one, don't go on.
+        if (!($atts['insert'] ?? false) || !in_array($atts['insert'], $this->allowed_inserts)) { return false; }
+
+        // We've got a known insert value, so create the text to be inserted.
+        switch ($atts['insert']) {
+            case self::INSERT_VALUE_YEAR: $text = date("Y"); break;
+            case self::INSERT_VALUE_MONTH_FULL: $text = date("F"); break;
+            case self::INSERT_VALUE_MONTH_ABBR: $text = date("M"); break;
+            case self::INSERT_VALUE_MONTH_NUM: $text = date("m"); break;
+            case self::INSERT_VALUE_DATE_FORMAT:
+                if ($atts['format'] ?? false) {
+                    $text = date($atts['format']);
+                } else {
+                    $text = "";
+                }
+                break;
+            default: $text = "";
+        }
+        return $text;
+    }
 }
